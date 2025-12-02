@@ -9,13 +9,13 @@
 #include "TinyIRReceiver.hpp"
 
 
-//IRSignal Variables
+//IR Signal Variables
 int newCommand;
 int speedCommand;
 int turnCommand;
 
 
-//could add more code to read encoder and double check speed
+//Set up variables
 
 const int enMotor = 9;
 const int motorF = 12;
@@ -33,8 +33,8 @@ const int DEADBAND = 15;
 int steerCentered = 512;
 int steerpwm = map(abs(steerCentered), 0, 512, 0, 255);
 
-
 Servo steer;
+
 
 void setup() {
   Serial.begin(115200);
@@ -49,6 +49,7 @@ void setup() {
   pinMode(motorR, OUTPUT);
   pinMode(enMotor, OUTPUT);
   
+  //servo pins
   pinMode(servoR, OUTPUT);
   pinMode(servoL, OUTPUT);
   
@@ -56,7 +57,7 @@ void setup() {
 
 void loop() {
 
-  //IR Signal
+  //Receive IR Signal
   if(TinyReceiverDecode()){
     
     newCommand = TinyIRReceiverData.Command;
@@ -70,7 +71,6 @@ void loop() {
   }
 
   //Speed Control
-  
   speedCentered = speedCommand - 512;
   speedpwm = map(abs(speedCentered), 0, 512, 0, 255);
   
@@ -82,7 +82,7 @@ void loop() {
     digitalWrite(motorF, LOW);
     digitalWrite(motorR, HIGH);
     analogWrite(enMotor, speedpwm);
-  } else {
+  } else {                       // stopped
     analogWrite(enMotor, 0);
     digitalWrite(motorF, LOW);
     digitalWrite(motorR, LOW);
@@ -95,16 +95,16 @@ void loop() {
   steerpwm = map(abs(steerCentered), 0, 512, 0, 255);
 
   
-  if (steerCentered > DEADBAND) { // forward
+  if (steerCentered > DEADBAND) { // Right
     digitalWrite(servoR, HIGH);
     digitalWrite(servoL, LOW);
     analogWrite(enServo, steerpwm);
     
-  } else if (steerCentered < -DEADBAND) { // reverse
+  } else if (steerCentered < -DEADBAND) { // Left
     digitalWrite(servoR, LOW);
     digitalWrite(servoL, HIGH);
     analogWrite(enServo, steerpwm);
-  } else {
+  } else { // Straight
     analogWrite(enServo, 0);
     digitalWrite(servoL, LOW);
     digitalWrite(servoR, LOW);
