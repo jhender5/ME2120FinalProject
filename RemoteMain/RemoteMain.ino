@@ -4,10 +4,15 @@
 #include <Arduino.h>
 #include "TinyIRSender.hpp"
 
+//Set up variables
 int xPin = A7;
 int yPin = A6;
 int xVal = 511;
 int yVal = 511;
+
+//address to send to, and number of times to repeat command
+  uint8_t address = 0x4;
+  uint8_t repeats = 0;
 
 
 void setup() {
@@ -30,12 +35,8 @@ void checkJoysticks() {
 }
 
 bool transmitCommand(int x, int y) {
-  //address to send to, and number of times to repeat command
-
-  uint8_t address = 0x4;
-  uint8_t repeats = 0;
-
-  //Command must be made 16bit, x value is between 0 and 1023, y value between 1024 and 2047
+  
+  //Command must be made 16bit, x (forward) value is between 0 and 1023, y (turning) value between 1024 and 2047
   uint16_t xCommand = xVal;
   uint16_t yCommand = yVal + 0x400;
 
