@@ -61,7 +61,8 @@ void loop() {
   if(TinyReceiverDecode()){
     
     newCommand = TinyIRReceiverData.Command;
-
+    
+    //Determine if command is for steering or speed, and parse commanded value
     if (newCommand >= 1024){
       turnCommand = newCommand-1024;
     } else {
@@ -71,18 +72,19 @@ void loop() {
   }
 
   //Speed Control
+  //Center and map speed command
   speedCentered = speedCommand - 512;
   speedpwm = map(abs(speedCentered), 0, 512, 0, 255);
   
-  if (speedCentered > DEADBAND) { // forward
+  if (speedCentered > DEADBAND) { //Forward
     digitalWrite(motorF, HIGH);
     digitalWrite(motorR, LOW);
     analogWrite(enMotor, speedpwm);
-  } else if (speedCentered < -DEADBAND) { // reverse
+  } else if (speedCentered < -DEADBAND) { //Reverse
     digitalWrite(motorF, LOW);
     digitalWrite(motorR, HIGH);
     analogWrite(enMotor, speedpwm);
-  } else {                       // stopped
+  } else {                       //Stopped
     analogWrite(enMotor, 0);
     digitalWrite(motorF, LOW);
     digitalWrite(motorR, LOW);
@@ -91,20 +93,21 @@ void loop() {
   
   
   //Steering Control
+  //Center and map steering control
   steerCentered = turnCommand - 512;
   steerpwm = map(abs(steerCentered), 0, 512, 0, 255);
 
   
-  if (steerCentered > DEADBAND) { // Right
+  if (steerCentered > DEADBAND) { //Right
     digitalWrite(servoR, HIGH);
     digitalWrite(servoL, LOW);
     analogWrite(enServo, steerpwm);
     
-  } else if (steerCentered < -DEADBAND) { // Left
+  } else if (steerCentered < -DEADBAND) { //Left
     digitalWrite(servoR, LOW);
     digitalWrite(servoL, HIGH);
     analogWrite(enServo, steerpwm);
-  } else { // Straight
+  } else { //Straight
     analogWrite(enServo, 0);
     digitalWrite(servoL, LOW);
     digitalWrite(servoR, LOW);
